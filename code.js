@@ -60,10 +60,11 @@ const draw = geo_data => {
 
                 if(i < nested.length){
 
-                    const transition = (selection, setting) =>
+                    const transition = (selection, time) =>
                         selection
                             .style('opacity', 1)
                             .transition()
+                            .delay(time)
                             .duration(3000)
                             .style('opacity', 0)
 
@@ -81,11 +82,11 @@ const draw = geo_data => {
                                         d3.select(this).append('text')
                                             .attr('class', 'tooltip')
                                             .attr('x', '50%')
-                                            .attr('y', '20%')
+                                            .attr('y', '18%')
                                             .attr('fill', '#F35F5F')
                                             .attr('text-anchor', 'middle')
                                             .text(d => d['home'] + ' ' + d['year'])
-                                            .call(transition)
+                                            .call(transition, 100)
                                     }
                                 })
 
@@ -101,7 +102,7 @@ const draw = geo_data => {
                                 .attr('cy', d => extractCoordinates(d)['y_coordinate'] || '')
                                 .attr('r', extractRadius)
                                 .style('fill', '#FC998E')
-                                .call(transition)
+                                .call(transition, 0)
 
                     i++
                     plot()
