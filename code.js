@@ -12,20 +12,20 @@ const geoPath = d3.geoPath().projection(projection)
 const draw = geo_data => {
 
     let svg = d3.select('body')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-            .append('g')
-            .attr('class', 'map')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .append('g')
+                .attr('class', 'map')
 
     let map = svg.selectAll('path')
-        .data(geo_data.features)
-        .enter()
-        .append('path')
-        .attr('d', geoPath)
-        .style('fill', '#99C1DC')
-        .style('stroke', 'black')
-        .style('stroke-width', '0.5')
+                .data(geo_data.features)
+                .enter()
+                .append('path')
+                .attr('d', geoPath)
+                .style('fill', '#99C1DC')
+                .style('stroke', 'black')
+                .style('stroke-width', '0.5')
 
 
     const extractCoordinates = game => {
@@ -52,41 +52,56 @@ const draw = geo_data => {
             return radius(attendance)
         }
 
+
         let i = 0
 
         const plot = () => {
             setTimeout(() => {
+
                 if(i < nested.length){
 
-                    const transition = selection =>
+                    const transition = (selection, setting) =>
                         selection
                             .style('opacity', 1)
                             .transition()
                             .duration(3000)
                             .style('opacity', 0)
 
-
-                    let svg = d3.select('svg')
+                    let points = d3.select('svg')
                                 .append('g')
-                                .attr('class', 'bubble')
-
-                    let g = d3.selectAll('g')
-                                .selectAll('circle')
+                                .attr('class', 'points')
+                                .selectAll('.points')
                                 .data(nested[i].values)
                                 .enter()
+
+                    let title = points
+                                .each(function(d,i) {
+                                    if (i !== 0) return
+                                    else {
+                                        d3.select(this).append('text')
+                                            .attr('class', 'tooltip')
+                                            .attr('x', '50%')
+                                            .attr('y', '20%')
+                                            .attr('fill', '#F35F5F')
+                                            .attr('text-anchor', 'middle')
+                                            .text(d => d['home'] + ' ' + d['year'])
+                                            .call(transition)
+                                    }
+                                })
+
+                    let bubble = points
+                                .append('g')
+                                .attr('class', 'bubble')
+                                .attr('id', d => d['game_id'])
                                 .append('circle')
 
-                    let circle = g
-                                    .attr('id', d => d['game_id'])
-                                    .attr('cx', d => extractCoordinates(d)['x_coordinate'] || '')
-                                    .attr('cy', d => extractCoordinates(d)['y_coordinate'] || '')
-                                    .attr('r', extractRadius)
-                                    .style('fill', '#FC998E')
-                                    .call(transition)
-
-                    let text = g
-                                .append('p').text('hi')
-
+                    let circle = bubble
+                                .attr('id', d => d['game_id'])
+                                .attr('cx', d => extractCoordinates(d)['x_coordinate'] || '')
+                                .attr('cy', d => extractCoordinates(d)['y_coordinate'] || '')
+                                .attr('r', extractRadius)
+                                .style('fill', '#FC998E')
+                                .call(transition)
 
                     i++
                     plot()
@@ -98,31 +113,3 @@ const draw = geo_data => {
 
     d3.tsv('world_cup_geo.tsv', plotPoints)
 }
-
-
-
-// let svg = d3.select('svg')
-//     svg.append('g')
-//         .attr('class', 'bubble')
-//         .selectAll('circle')
-//         .data(nested[i].values)
-//         .enter()
-//         .each(matches => {
-//             d3.select('h2')
-//                 .text(matches.home + ' ' + nested[i].key)
-//         })
-//
-//     svg.append('circle')
-//         .attr('id', d => d['game_id'])
-//         .attr('cx', d => extractCoordinates(d)['x_coordinate'] || '')
-//         .attr('cy', d => extractCoordinates(d)['y_coordinate'] || '')
-//         .attr('r', extractRadius)
-//         .style('fill', '#FC998E')
-//         .style('opacity', 1)
-//         .transition()
-//         .duration(3000)
-//         .style('opacity', 0)
-//
-//     svg.append('p')
-//         .text('hiiiiiii')
-//         .style('font-size', '20px')
